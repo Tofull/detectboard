@@ -86,10 +86,14 @@
             <div>
               <div v-if="log_file" class="text-center my-5">
                 <h3 class="text-center">Current log file : </h3>
-                <p> {{log_file.log_file}} <span class="text-muted">({{log_file.uploaded_at}})</span></p>
+                <p> {{log_file.log_file}}
+                  <span class="text-muted">({{log_file.uploaded_at}})</span>
+                </p>
               </div>
               <div v-else class="text-center my-5">
-                <p class="pt-5"> <strong>How to do a detectron log file ?</strong></p>
+                <p class="pt-5">
+                  <strong>How to do a detectron log file ?</strong>
+                </p>
                 <p> Pipe the training command with the following : </p>
                 <code>
                   python2 tools/train_net.py --cfg ... OUTPUT_DIR ... | tee -a &lt;your training log filename&gt;.log 
@@ -138,8 +142,8 @@
     </main>
     <footer class="footer">
       <div class="container text-center">
-        <span class="text-muted ">Thanks <a target="_blank" href="https://twitter.com/intent/tweet?text=Thanks%20@_Tofull%20for%20the%20DetectBoard!%20%20-->%20https://tofull.github.io/tools/detectboard%21&related=_Tofull&via=_Tofull&hashtags=DL%2CAI%2Cdetectron%2Ctraining%2Ctool">Loïc
-            Messal </a>!</span>
+        <span class="text-muted ">Thanks
+          <a target="_blank" href="https://twitter.com/intent/tweet?text=Thanks%20@_Tofull%20for%20the%20DetectBoard!%20%20-->%20https://tofull.github.io/tools/detectboard%21&related=_Tofull&via=_Tofull&hashtags=DL%2CAI%2Cdetectron%2Ctraining%2Ctool">Loïc Messal </a>!</span>
       </div>
     </footer>
     </div>
@@ -165,7 +169,7 @@
             }
             return false;
           },
-          list_property: function() {
+          list_property: function () {
             let list_property = []
             if (this.d3data && typeof this.d3data !== 'undefined' && this.d3data.length > 0) {
               // Suppose all detectron json objects have the same schema. So only parse the first item.
@@ -184,6 +188,7 @@
       $(window).bind('drop', handleFileSelect);
       $('.overlay').bind('dragleave', handleDragLeave);
 
+      // TODO(tofull) add svg as a part of app. Help wanted.
       var svg = d3.select("svg"),
         margin = { top: 20, right: 20, bottom: 110, left: 40 },
         margin2 = { top: 430, right: 20, bottom: 30, left: 40 },
@@ -226,7 +231,7 @@
         .attr("x", 0)
         .attr("y", 0);
 
-      var Line_chart = svg.append("g")
+      var line_chart = svg.append("g")
         .attr("class", "focus")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
         .attr("clip-path", "url(#clip)");
@@ -280,7 +285,6 @@
         updateGraph(data)
       }
 
-
       function readData(content) {
         let data = []
         var txt = content.split("\n");
@@ -306,7 +310,7 @@
         x2.domain(x.domain());
         y2.domain(y.domain());
 
-        Line_chart = svg.append("g")
+        line_chart = svg.append("g")
           .attr("class", "focus")
           .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
           .attr("clip-path", "url(#clip)");
@@ -328,7 +332,7 @@
           .attr("class", "axis axis--y")
           .call(yAxis);
 
-        var path = Line_chart.append("path")
+        var path = line_chart.append("path")
           .datum(data)
           .attr("class", "line")
           .attr("d", line)
@@ -342,7 +346,7 @@
           .duration(4000)
           .ease(d3.easeQuadOut)
 
-        Line_chart.selectAll(".line").transition(t)
+        line_chart.selectAll(".line").transition(t)
           .attr("stroke-dashoffset", 0)
 
         context.append("path")
@@ -372,7 +376,7 @@
         if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
         var s = d3.event.selection || x2.range();
         x.domain(s.map(x2.invert, x2));
-        Line_chart.select(".line").attr("d", line);
+        line_chart.select(".line").attr("d", line);
         focus.select(".axis--x").call(xAxis);
         svg.select(".zoom").call(zoom.transform, d3.zoomIdentity
           .scale(width / (s[1] - s[0]))
@@ -383,7 +387,7 @@
         if (d3.event.sourceEvent && d3.event.sourceEvent.type === "brush") return; // ignore zoom-by-brush
         var t = d3.event.transform;
         x.domain(t.rescaleX(x2).domain());
-        Line_chart.select(".line").attr("d", line);
+        line_chart.select(".line").attr("d", line);
         focus.select(".axis--x").call(xAxis);
         context.select(".brush").call(brush.move, x.range().map(t.invertX, t));
       }
