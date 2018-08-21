@@ -138,7 +138,7 @@
     </main>
     <footer class="footer">
       <div class="container text-center">
-        <span class="text-muted ">Thanks <a target="_blank" href="https://twitter.com/intent/tweet?text=Thanks%20@_Tofull%20for%20the%20DetectBoard!%20%20-->%20https://tofull.github.io/tools/detectboard%21&related=_Tofull&via=_Tofull&hashtags=DL%2CAI%2Cdetectron">Loïc
+        <span class="text-muted ">Thanks <a target="_blank" href="https://twitter.com/intent/tweet?text=Thanks%20@_Tofull%20for%20the%20DetectBoard!%20%20-->%20https://tofull.github.io/tools/detectboard%21&related=_Tofull&via=_Tofull&hashtags=DL%2CAI%2Cdetectron%2Ctraining%2Ctool">Loïc
             Messal </a>!</span>
       </div>
     </footer>
@@ -168,7 +168,6 @@
           list_property: function() {
             let list_property = []
             if (this.d3data && typeof this.d3data !== 'undefined' && this.d3data.length > 0) {
-              list_property = []
               // Suppose all detectron json objects have the same schema. So only parse the first item.
               for (let key of Object.keys(this.d3data[0])) {
                 if (Number.isFinite(this.d3data[0][key])) {
@@ -176,62 +175,14 @@
                 }
               }
             }
-
             return list_property;
-
           }
-        },
-        created: function(){
-          console.log("Hello vue ! :)")
         }
       })
 
-
-      // Put all the following functions in vue item.
       $(window).bind('dragover', handleDragOver);
       $(window).bind('drop', handleFileSelect);
       $('.overlay').bind('dragleave', handleDragLeave);
-
-      function handleDragLeave(event) {
-        event.stopPropagation();
-        $('.overlay').hide();
-      }
-
-      function handleDragOver(event) {
-        event.stopPropagation();
-        event.preventDefault();
-        event.originalEvent.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
-        $('.overlay').show();
-      }
-
-      function handleFileSelect(event) {
-        var files = event.originalEvent.dataTransfer.files; // FileList object
-        event.stopPropagation();
-        event.preventDefault();
-        $('.overlay').hide();
-
-        for (var i = 0, file; file = files[i]; i++) {
-          readFile(file, updateView);
-        }
-      }
-
-      function readFile(file, cb) {
-        var reader = new FileReader;
-        reader.onload = function (e) {
-          cb(e.target.result, file);
-        };
-        reader.readAsText(file);
-      }
-
-      function updateView(content, file) {
-        app.log_file = {} || app.log_file;
-        app.log_file.log_file = file.name;
-        app.log_file.uploaded_at = new Date().toLocaleDateString([], { hour: '2-digit', minute: '2-digit' });
-
-        let data = readData(content);
-        app.d3data = data
-        updateGraph(data)
-      }
 
       var svg = d3.select("svg"),
         margin = { top: 20, right: 20, bottom: 110, left: 40 },
@@ -287,6 +238,48 @@
       var context = svg.append("g")
         .attr("class", "context")
         .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
+
+      function handleDragLeave(event) {
+        event.stopPropagation();
+        $('.overlay').hide();
+      }
+
+      function handleDragOver(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        event.originalEvent.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+        $('.overlay').show();
+      }
+
+      function handleFileSelect(event) {
+        var files = event.originalEvent.dataTransfer.files; // FileList object
+        event.stopPropagation();
+        event.preventDefault();
+        $('.overlay').hide();
+
+        for (var i = 0, file; file = files[i]; i++) {
+          readFile(file, updateView);
+        }
+      }
+
+      function readFile(file, cb) {
+        var reader = new FileReader;
+        reader.onload = function (e) {
+          cb(e.target.result, file);
+        };
+        reader.readAsText(file);
+      }
+
+      function updateView(content, file) {
+        app.log_file = {} || app.log_file;
+        app.log_file.log_file = file.name;
+        app.log_file.uploaded_at = new Date().toLocaleDateString([], { hour: '2-digit', minute: '2-digit' });
+
+        let data = readData(content);
+        app.d3data = data
+        updateGraph(data)
+      }
+
 
       function readData(content) {
         let data = []
